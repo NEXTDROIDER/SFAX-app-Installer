@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Sil Installer</title>
+  <style>
+    /* 🌑 Полностью тёмная тема */
+    body {
+      background: #121212;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      text-align: center;
+      padding: 50px 20px;
+      margin: 0;
+    }
+
+    /* Логотип сверху */
+    #logo {
+      width: 120px;
+      height: 120px;
+      border-radius: 30px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    }
+
+    h1 {
+      font-size: 42px;
+      margin-bottom: 40px;
+      color: #4CAF50;
+      text-shadow: 0 0 10px #4CAF50;
+    }
+
+    input[type="file"] {
+      padding: 12px;
+      margin: 15px 0;
+      border-radius: 12px;
+      border: none;
+      background: #1f1f1f;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button {
+      background: #4CAF50;
+      color: white;
+      padding: 14px 28px;
+      font-size: 18px;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #45a049;
+    }
+
+    #status a {
+      color: #4CAF50;
+      font-size: 18px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    #status a:hover {
+      text-decoration: underline;
+    }
+
+    /* Карточка загрузки */
+    .container {
+      background: #1e1e1e;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.7);
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <img id="logo" src="favicon.ico" alt="Seal Installer Logo" />
+  <h1>🦭 seal Installer</h1>
+
+  <input type="file" id="ipa" />
+  <br>
+  <button onclick="upload()">Подписать и установить</button>
+
+  <p id="status"></p>
+</div>
+
+<script>
+async function upload() {
+  const file = document.getElementById("ipa").files[0];
+  if (!file) return alert("Выбери IPA");
+
+  const form = new FormData();
+  form.append("ipa", file);
+
+  document.getElementById("status").innerText = "⏳ Подпись...";
+
+  try {
+    const res = await fetch("https://YOUR-SERVER/upload", {
+      method: "POST",
+      body: form
+    });
+
+    const data = await res.json();
+
+    if (data.installUrl) {
+      document.getElementById("status").innerHTML =
+        `<a href="${data.installUrl}">👉 Установить</a>`;
+    } else {
+      document.getElementById("status").innerText = "❌ Ошибка";
+    }
+  } catch(e) {
+    document.getElementById("status").innerText = "❌ Ошибка сервера";
+  }
+}
+</script>
+
+</body>
+</html>
